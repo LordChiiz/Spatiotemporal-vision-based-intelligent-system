@@ -2,6 +2,10 @@ from ultralytics import YOLO
 import cv2
 import time
 import csv
+from analytics import TrafficAnalytics
+
+analytics = TrafficAnalytics() #create instance of analytics class
+
 
 model = YOLO("yolov8n.pt")
 
@@ -10,7 +14,7 @@ cap = cv2.VideoCapture(video_path)
 
 csv_file = open('Traffic_data.csv', mode='w', newline='')
 csv_writer = csv.writer(csv_file)                       #store data in csv file
-csv_writer.writerow(["Timestamp", "Total Vehicle Count", "Car Count", "Bus Count", "Truck Count", "Flow Rate (vehicles/min)"])   
+csv_writer.writerow(["timestamp", "track_id", "class", "direction", "flow_rate"])   
 
 
 car_count = 0
@@ -59,21 +63,23 @@ while cap.isOpened():
         # Now only count vehicles that cross line from above to below
         if prev_y < line_y and center_y > line_y and track_id not in counted_ids:
             counted_ids.add(track_id)
-            vehicle_count += 1
+            
+            analytics.update_counts(cls)
+            # vehicle_count += 1
 
-            if cls == 2:
-                car_count += 1
-            elif cls == 7:
-                truck_count += 1
-            elif cls == 5:
-                bus_count += 1
+            # if cls == 2:
+            #     car_count += 1
+            # elif cls == 7:
+            #     truck_count += 1
+            # elif cls == 5:
+            #     bus_count += 1
 
             
             timestamp = round(time.time() - start_time, 2)
-            csv_writer.writerow([timestamp, vehicle_count, car_count, bus_count, truck_count, flow_rate])
+            csv_writer.writerow([timestamp, track_id, cls, "down", flow_rate])  #write data to csv
             
         elapsed_time = round(time.time() - start_time, 2)
-        flow_rate = round(vehicle_count / (elapsed_time / 60) if elapsed_time > 0 else 0, 2)  #veh/min
+        flow_rate = analytics.compute_flow_rate()
 
         prev_positions[track_id] = center_y
 
