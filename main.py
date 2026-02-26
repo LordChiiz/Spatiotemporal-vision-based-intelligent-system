@@ -1,11 +1,17 @@
 from ultralytics import YOLO
 import cv2
 import time
+import csv
 
 model = YOLO("yolov8n.pt")
 
 video_path = "traffic.mp4"
 cap = cv2.VideoCapture(video_path)
+
+csv_file = open('Traffic_data.csv', mode='w', newline='')
+csv_writer = csv.writer(csv_file)                       #store data in csv file
+csv_writer.writerow(["Timestamp", "Total Vehicle Count", "Car Count", "Bus Count", "Truck Count", "Flow Rate (vehicles/min)"])   
+
 
 car_count = 0
 truck_count = 0                 #to count cars, trucks, buses individually
@@ -47,6 +53,8 @@ while cap.isOpened():
   
         prev_y = prev_positions[track_id]
 
+        elapsed_time = round(time.time() - start_time, 2)
+        flow_rate = round(vehicle_count / (elapsed_time / 60) if elapsed_time > 0 else 0, 2)  #veh/min
 
         # Now only count vehicles that cross line from above to below
         if prev_y < line_y and center_y > line_y and track_id not in counted_ids:
@@ -59,9 +67,13 @@ while cap.isOpened():
                 truck_count += 1
             elif cls == 5:
                 bus_count += 1
+
             
-        elapsed_time = time.time() - start_time
-        flow_rate = vehicle_count / (elapsed_time / 60) if elapsed_time > 0 else 0  #veh/min
+            timestamp = round(time.time() - start_time, 2)
+            csv_writer.writerow([timestamp, vehicle_count, car_count, bus_count, truck_count, flow_rate])
+            
+        elapsed_time = round(time.time() - start_time, 2)
+        flow_rate = round(vehicle_count / (elapsed_time / 60) if elapsed_time > 0 else 0, 2)  #veh/min
 
         prev_positions[track_id] = center_y
 
@@ -86,13 +98,11 @@ while cap.isOpened():
         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,255), 2)
 
 
-    cv2.imshow("Traffic Tracking", annotated_frame)
-
-               
-    cv2.imshow("Traffic Detection", annotated_frame)         #display         
+    cv2.imshow("Traffic Tracking", annotated_frame)            #display 
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+csv_file.close()
 cap.release()
 cv2.destroyAllWindows()
