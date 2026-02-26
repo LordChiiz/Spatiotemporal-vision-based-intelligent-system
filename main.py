@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 import cv2
+import time
 
 model = YOLO("yolov8n.pt")
 
@@ -13,6 +14,8 @@ bus_count = 0
 counted_ids = set() #container for the counted vehicle ids
 vehicle_count = 0 #increases as cars pass he line
 prev_positions = {} #to track previous positions of vehicles
+
+start_time = time.time() #to calculate vehicle per minute
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -56,6 +59,9 @@ while cap.isOpened():
                 truck_count += 1
             elif cls == 5:
                 bus_count += 1
+            
+        elapsed_time = time.time() - start_time
+        flow_rate = vehicle_count / (elapsed_time / 60) if elapsed_time > 0 else 0  #veh/min
 
         prev_positions[track_id] = center_y
 
@@ -76,6 +82,8 @@ while cap.isOpened():
     cv2.putText(annotated_frame, f"Trucks: {truck_count}", (50, 150),
         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,0), 2)
 
+    cv2.putText(annotated_frame, f"Flow Rate (vehicles/min): {flow_rate:.2f}", (50, 190),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,255), 2)
 
 
     cv2.imshow("Traffic Tracking", annotated_frame)
