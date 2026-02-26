@@ -8,7 +8,6 @@ cap = cv2.VideoCapture(video_path)
 
 counted_ids = set() #container for the counted vehicle ids
 vehicle_count = 0 #increases as cars pass he line
-
 prev_positions = {} #to track previous positions of vehicles
 
 while cap.isOpened():
