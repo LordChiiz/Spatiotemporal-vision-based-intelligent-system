@@ -88,16 +88,16 @@ while cap.isOpened():
     annotated_frame = results[0].plot()
     cv2.line(annotated_frame, (0, line_y), (width, line_y), (0, 255, 255), 2)
 
-    cv2.putText(annotated_frame, f"Total Vehicle count: {vehicle_count}", (50, 50),
+    cv2.putText(annotated_frame, f"Total Vehicle count: {analytics.vehicle_count}", (50, 50),
         cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 
-    cv2.putText(annotated_frame, f"Cars: {car_count}", (50, 90),
+    cv2.putText(annotated_frame, f"Cars: {analytics.car_count}", (50, 90),
         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,0), 2)               #display individual counts of cars, buses, trucks on the frame
 
-    cv2.putText(annotated_frame, f"Buses: {bus_count}", (50, 120),
+    cv2.putText(annotated_frame, f"Buses: {analytics.bus_count}", (50, 120),
         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,0), 2)
 
-    cv2.putText(annotated_frame, f"Trucks: {truck_count}", (50, 150),
+    cv2.putText(annotated_frame, f"Trucks: {analytics.truck_count}", (50, 150),
         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,0), 2)
 
     cv2.putText(annotated_frame, f"Flow Rate (vehicles/min): {flow_rate:.2f}", (50, 190),
