@@ -1,3 +1,7 @@
-Timestamp,Total Vehicle Count,Car Count,Bus Count,Truck Count,Flow Rate (vehicles/min)
-12.98,1,0,0,1,0.0
-21.83,2,1,0,1,2.75
+timestamp,track_id,class,direction,flow_rate
+17.59,31,7,down,0.0
+25.99,83,2,down,0.0
+38.11,112,2,down,0.0
+45.1,120,2,down,0.0
+46.4,127,2,down,0.0
+51.72,136,2,down,0.0

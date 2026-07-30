@@ -27,6 +27,8 @@ prev_positions = {} #to track previous positions of vehicles
 
 start_time = time.time() #to calculate vehicle per minute
 
+flow_rate = 0
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:

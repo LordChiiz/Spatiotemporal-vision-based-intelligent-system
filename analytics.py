@@ -20,7 +20,7 @@ class TrafficAnalytics:
         elif cls == 7:
             self.truck_count += 1
         current_time = time.time()
-        self.crossing_times.append(current_time - self.start_time)
+        self.crossing_times.append(current_time)
 
         self.crossing_times = [t for t in self.crossing_times if current_time - t <= 60]  # Keep only crossings in the last minute
 
